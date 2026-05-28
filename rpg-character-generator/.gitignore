@@ -1,0 +1,58 @@
+# ── Environment ──────────────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.log
+
+# ── Docker ────────────────────────────────────────────────────────────────────
+# Keep docker-compose.yml and Dockerfiles tracked
+# Ignore generated/runtime artifacts
+avatars/
+
+# ── Node / React Native / Expo ────────────────────────────────────────────────
+mobile/node_modules/
+mobile/.expo/
+mobile/dist/
+mobile/.cache/
+mobile/*.tsbuildinfo
+mobile/expo-env.d.ts
+mobile/package-lock.json
+
+# ── AI Assistants ─────────────────────────────────────────────────────────────
+.claude/
+.cursor/
+.aider*
+.copilot/
+.github/copilot-instructions.md
+.chatgpt/
+.openai/
+.gemini/
+.grok/
+
+# ── IDE / OS ──────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
