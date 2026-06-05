@@ -1,0 +1,14 @@
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 3000,
+    proxy: {
+      '/gerar-personagem': 'http://localhost:5000',
+      '/status':           'http://localhost:5000',
+      '/avatar':           'http://localhost:5000',
+    },
+  },
+})
