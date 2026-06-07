@@ -39,9 +39,25 @@ function statColor(val: number): string {
 
 export function CharacterSheet({ character, taskId, onReset, isDemo }: Props) {
   const [imgErr, setImgErr] = useState(false)
+  const [lightbox, setLightbox] = useState(false)
+
+  const avatarUrl = getAvatarUrl(taskId)
 
   return (
     <div className="card sheet-card">
+      {/* ── Lightbox ── */}
+      {lightbox && !imgErr && (
+        <div className="lightbox-overlay" onClick={() => setLightbox(false)}>
+          <img
+            src={avatarUrl}
+            alt={character.name}
+            className="lightbox-img"
+            onClick={e => e.stopPropagation()}
+          />
+          <button className="lightbox-close" onClick={() => setLightbox(false)}>✕</button>
+        </div>
+      )}
+
       {/* ── Top ── */}
       <div className="sheet-top">
         <div className="sheet-avatar">
@@ -51,10 +67,11 @@ export function CharacterSheet({ character, taskId, onReset, isDemo }: Props) {
             </div>
           ) : (
             <img
-              src={getAvatarUrl(taskId)}
+              src={avatarUrl}
               alt={character.name}
-              className="avatar-img"
+              className="avatar-img avatar-clickable"
               onError={() => setImgErr(true)}
+              onClick={() => setLightbox(true)}
             />
           )}
         </div>
