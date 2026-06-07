@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { Character, getAvatarUrl } from "../services/api";
 import { Icon } from "./Icons";
-import { useSmartPrint, PageRender } from "react-smart-print";
+import {
+  useSmartPrint, PageRender,
+  Typography, Divider, Image as PrintImage,
+  Table, TableHead, TableBody, TableRow, TableCell,
+} from "react-smart-print";
 
 interface Props {
   character: Character;
@@ -58,91 +62,95 @@ function fmtDerived(val: number, unit: string) {
 }
 
 function PrintContent({ character, avatarUrl, isDemo }: { character: Character; avatarUrl: string | null; isDemo?: boolean }) {
-  const s = {
-    page:    { fontFamily: "'Cinzel', Georgia, serif", color: "#24221c", padding: "0 8px" } as React.CSSProperties,
-    kicker:  { fontSize: 10, letterSpacing: 4, textTransform: "uppercase" as const, color: "#9e2b25", marginBottom: 4 },
-    title:   { fontSize: 28, fontWeight: 700, margin: "4px 0 12px", letterSpacing: 1 },
-    divider: { borderBottom: "2px solid #24221c", marginBottom: 18 },
-    label:   { fontSize: 9, letterSpacing: 2, textTransform: "uppercase" as const, color: "#8b8468", marginBottom: 2, fontFamily: "'IBM Plex Mono', monospace" },
-    value:   { fontSize: 18, marginBottom: 10, fontFamily: "'Spectral', Georgia, serif" },
-    row:     { display: "flex", gap: 32, marginBottom: 18, flexWrap: "wrap" as const },
-    abilityGrid: { display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 8, marginBottom: 24 } as React.CSSProperties,
-    abilityBox:  { border: "1px solid #bbb097", padding: "10px 6px 18px", textAlign: "center" as const, position: "relative" as const, background: "rgba(255,255,255,0.3)" },
-    abilityK:    { fontSize: 9, letterSpacing: 2, color: "#56523f", fontFamily: "'IBM Plex Mono', monospace" },
-    abilityV:    { fontSize: 34, fontWeight: 700, lineHeight: 1, margin: "4px 0 2px" },
-    abilityLbl:  { fontSize: 10, fontStyle: "italic" as const, color: "#8b8468", fontFamily: "'Spectral', Georgia, serif" },
-    abilityMod:  { position: "absolute" as const, bottom: -12, left: "50%", transform: "translateX(-50%)", width: 28, height: 24, border: "1px solid #bbb097", background: "#f1ece0", display: "grid", placeItems: "center", fontSize: 12, fontWeight: 600, color: "#2f3a63", fontFamily: "'IBM Plex Mono', monospace" } as React.CSSProperties,
-    combatGrid:  { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8, marginBottom: 24 } as React.CSSProperties,
-    combatBox:   { border: "1px solid #bbb097", padding: "10px 10px 12px", background: "rgba(255,255,255,0.3)" },
-    combatLabel: { fontSize: 9, letterSpacing: 2, color: "#56523f", textTransform: "uppercase" as const, marginBottom: 6, fontFamily: "'IBM Plex Mono', monospace" },
-    combatVal:   { fontSize: 26, fontWeight: 700 },
-    secHeader:   { fontSize: 10, letterSpacing: 3, textTransform: "uppercase" as const, color: "#2f3a63", borderBottom: "1.5px solid #24221c", paddingBottom: 6, marginBottom: 12, marginTop: 20, fontFamily: "'IBM Plex Mono', monospace" },
-    stamp:       { display: "inline-block", border: "2px solid #9e2b25", padding: "3px 12px", color: "#9e2b25", fontWeight: 700, letterSpacing: 3, fontSize: 12, transform: "rotate(-9deg)", borderRadius: 3 },
-    portrait:    { width: 110, height: 130, border: "1px solid #bbb097", objectFit: "cover" as const },
-    portraitPlaceholder: { width: 110, height: 130, border: "1px solid #bbb097", display: "flex", alignItems: "center", justifyContent: "center", color: "#8b8468", fontSize: 11, letterSpacing: 2, fontFamily: "'IBM Plex Mono', monospace" },
-  }
-
   const STAT_FULL: Record<string, string> = { FOR:"Força", DES:"Destreza", INT:"Inteligência", CON:"Constituição", SAB:"Sabedoria", CAR:"Carisma" }
   const DERIVED_META: Record<string, { label: string; unit: string }> = {
     dano: { label: "Dano", unit: "" }, defesa: { label: "Defesa", unit: "" },
     critico: { label: "Chance Crítica", unit: "%" }, velocidade_ataque: { label: "Vel. de Ataque", unit: "×" },
   }
-
   const fmtMod = (v: number) => { const m = Math.floor((v - 10) / 2); return m >= 0 ? `+${m}` : `${m}` }
   const fmtDerived = (val: number, unit: string) => unit === "%" ? `${val.toFixed(1)}%` : unit === "×" ? `${val.toFixed(2)}×` : val.toFixed(1)
 
   return (
-    <div style={s.page}>
-      <div style={s.kicker}>Gerador de Personagens · D&amp;D 5e · SPD</div>
-      <div style={s.title}>Ficha de Personagem</div>
-      <div style={s.divider} />
+    <>
+      <Typography fontSize={9} color="#9e2b25" marginBottom={2}>
+        GERADOR DE PERSONAGENS · D&D 5e · SPD{isDemo ? " · DEMO" : ""}
+      </Typography>
+      <Typography bold fontSize={22} color="#24221c" marginBottom={4}>
+        Ficha de Personagem
+      </Typography>
+      <Divider />
 
-      <div style={s.row}>
-        {avatarUrl
-          ? <img src={avatarUrl} alt={character.name} style={s.portrait} />
-          : <div style={s.portraitPlaceholder}>RETRATO</div>
-        }
-        <div>
-          <div style={s.label}>Nome</div>
-          <div style={{ ...s.value, fontSize: 26, fontWeight: 700 }}>{character.name}</div>
-          <div style={s.row}>
-            <div><div style={s.label}>Classe</div><div style={s.value} >{character.class}</div></div>
-            <div><div style={s.label}>Raça</div><div style={s.value}>{character.race}</div></div>
-            <div><div style={s.label}>Registro</div><div style={{ ...s.value, fontSize: 13, fontFamily: "'IBM Plex Mono', monospace" }}>#{character.id.slice(0, 8)}</div></div>
-          </div>
-          {isDemo && <span style={s.stamp}>Demo</span>}
-        </div>
-      </div>
+      {avatarUrl && (
+        <PrintImage src={avatarUrl} alt={character.name} width={110} height={140} fit="cover" marginBottom={10} />
+      )}
 
-      <div style={s.secHeader}>Atributos Base · 4d6 ↓1</div>
-      <div style={s.abilityGrid}>
-        {Object.entries(character.base_attributes).map(([stat, val]) => (
-          <div key={stat} style={s.abilityBox}>
-            <div style={s.abilityK}>{stat}</div>
-            <div style={s.abilityV}>{val}</div>
-            <div style={s.abilityLbl}>{STAT_FULL[stat] ?? stat}</div>
-            <div style={{ ...s.abilityMod, color: Math.floor((val-10)/2) < 0 ? "#9e2b25" : "#2f3a63" }}>{fmtMod(val)}</div>
-          </div>
-        ))}
-      </div>
+      <Typography bold fontSize={18} color="#24221c" marginTop={8} marginBottom={4}>
+        {character.name}
+      </Typography>
+      <Typography fontSize={11} color="#56523f" marginBottom={2}>
+        Classe: {character.class}   ·   Raça: {character.race}   ·   #{character.id.slice(0, 8)}
+      </Typography>
 
-      <div style={s.secHeader}>Combate / Derivados</div>
-      <div style={s.combatGrid}>
-        {Object.entries(character.derived_attributes).map(([key, val]) => {
-          const meta = DERIVED_META[key]; if (!meta) return null
-          return (
-            <div key={key} style={s.combatBox}>
-              <div style={s.combatLabel}>{meta.label}</div>
-              <div style={s.combatVal}>{fmtDerived(val, meta.unit)}</div>
-            </div>
-          )
-        })}
-      </div>
+      <Divider />
+      <Typography bold fontSize={10} color="#2f3a63" marginTop={12} marginBottom={6}>
+        ATRIBUTOS BASE · 4d6 ↓1
+      </Typography>
 
-      <div style={{ borderTop: "2px solid #24221c", paddingTop: 12, marginTop: 8, fontFamily: "'IBM Plex Mono', monospace", fontSize: 9, letterSpacing: 2, color: "#8b8468", textTransform: "uppercase" as const }}>
+      <Table width="100%">
+        <TableHead>
+          <TableRow>
+            {Object.keys(character.base_attributes).map((stat) => (
+              <TableCell key={stat}>{stat}</TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <TableRow>
+            {Object.entries(character.base_attributes).map(([stat, val]) => (
+              <TableCell key={stat}>{val}</TableCell>
+            ))}
+          </TableRow>
+          <TableRow>
+            {Object.entries(character.base_attributes).map(([stat, val]) => (
+              <TableCell key={stat}>{fmtMod(val)}</TableCell>
+            ))}
+          </TableRow>
+          <TableRow>
+            {Object.entries(character.base_attributes).map(([stat]) => (
+              <TableCell key={stat}>{STAT_FULL[stat] ?? stat}</TableCell>
+            ))}
+          </TableRow>
+        </TableBody>
+      </Table>
+
+      <Typography bold fontSize={10} color="#2f3a63" marginTop={16} marginBottom={6}>
+        COMBATE / DERIVADOS
+      </Typography>
+
+      <Table width="100%">
+        <TableHead>
+          <TableRow>
+            {Object.entries(character.derived_attributes).map(([key]) => {
+              const meta = DERIVED_META[key]; if (!meta) return null
+              return <TableCell key={key}>{meta.label}</TableCell>
+            })}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <TableRow>
+            {Object.entries(character.derived_attributes).map(([key, val]) => {
+              const meta = DERIVED_META[key]; if (!meta) return null
+              return <TableCell key={key}>{fmtDerived(val, meta.unit)}</TableCell>
+            })}
+          </TableRow>
+        </TableBody>
+      </Table>
+
+      <Divider />
+      <Typography fontSize={8} color="#8b8468" marginTop={8}>
         Selado por Worker · {new Date().toLocaleDateString("pt-BR")} · SPD Producer-Consumer · Flask → Redis
-      </div>
-    </div>
+      </Typography>
+    </>
   )
 }
 
