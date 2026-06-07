@@ -19,8 +19,6 @@ cp .env.example .env
 docker compose up --build
 ```
 
-A API fica disponível em `http://localhost:5000`.
-
 ## Escalar workers
 
 ```bash
