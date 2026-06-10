@@ -2,11 +2,12 @@ import json
 import logging
 import os
 import threading
-import uuid
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timezone
 from pathlib import Path
 
 import redis as redis_lib
+from pymongo import MongoClient
 
 from character import generate_base_attributes, generate_derived_attributes
 from openai_img import generate_avatar
@@ -18,7 +19,12 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
+MONGO_URL = os.environ.get("MONGO_URL", "mongodb://localhost:27017/rpg")
+
 rdb = redis_lib.from_url(REDIS_URL, decode_responses=True)
+mongo = MongoClient(MONGO_URL)
+db = mongo.get_default_database()
+characters_col = db["characters"]
 
 AVATARS_DIR = Path("/app/avatars")
 AVATARS_DIR.mkdir(parents=True, exist_ok=True)
@@ -35,6 +41,7 @@ def process_job(job: dict) -> None:
     char_class = job["class"]
     race = job["race"]
     name = job.get("name") or "Aventureiro"
+    username = job.get("username")
 
     log.info("Processando task %s — %s %s", task_id, race, char_class)
     _set_status(task_id, {"status": "processing", "character": None, "error": None})
@@ -46,7 +53,7 @@ def process_job(job: dict) -> None:
 
             base_attributes = future_attrs.result()
             derived_attributes = generate_derived_attributes(base_attributes, char_class)
-            avatar_path = future_avatar.result()
+            future_avatar.result()
 
         character = {
             "id": task_id,
@@ -59,6 +66,14 @@ def process_job(job: dict) -> None:
         }
 
         _set_status(task_id, {"status": "done", "character": character, "error": None})
+
+        if username:
+            characters_col.insert_one({
+                **character,
+                "username": username,
+                "created_at": datetime.now(tz=timezone.utc),
+            })
+
         log.info("Task %s concluída", task_id)
 
     except Exception as exc:

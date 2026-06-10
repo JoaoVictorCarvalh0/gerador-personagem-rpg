@@ -9,6 +9,15 @@ export default defineConfig({
       '/gerar-personagem': 'http://localhost:5000',
       '/status':           'http://localhost:5000',
       '/avatar':           'http://localhost:5000',
+      '/login': {
+        target: 'http://localhost:5000',
+        bypass: (req) => req.method === 'GET' ? req.url : undefined,
+      },
+      '/register': {
+        target: 'http://localhost:5000',
+        bypass: (req) => req.method === 'GET' ? req.url : undefined,
+      },
+      '/personagens': 'http://localhost:5000',
     },
   },
 })

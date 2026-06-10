@@ -1,4 +1,5 @@
 import os
+import random
 import urllib.parse
 from pathlib import Path
 
@@ -36,7 +37,7 @@ RACE_TRAIT_MAP = {
     "tiefling": "tiefling with horns and a tail",
 }
 
-POLLINATIONS_URL = "https://gen.pollinations.ai/image/{prompt}?model=flux&width=1024&height=1024&nologo=true"
+POLLINATIONS_URL = "https://gen.pollinations.ai/image/{prompt}?model=flux&width=1024&height=1024&nologo=true&seed={seed}"
 
 
 def generate_avatar(task_id: str, job: dict, avatars_dir: Path) -> str:
@@ -58,7 +59,8 @@ def generate_avatar(task_id: str, job: dict, avatars_dir: Path) -> str:
     )
 
     token = os.environ.get("POLLINATIONS_TOKEN", "")
-    url = POLLINATIONS_URL.format(prompt=urllib.parse.quote(prompt))
+    seed = random.randint(1, 2**31)
+    url = POLLINATIONS_URL.format(prompt=urllib.parse.quote(prompt), seed=seed)
 
     headers = {"User-Agent": "rpg-character-generator/1.0"}
     if token:

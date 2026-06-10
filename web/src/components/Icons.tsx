@@ -119,6 +119,64 @@ const PATHS: Record<string, React.ReactNode> = {
       <path d="M5 12.5 L10 17.5 L19 6.5" />
     </g>
   ),
+  key: (
+    <g>
+      <circle cx="8" cy="8" r="3.4" />
+      <path d="M10.4 10.4 L18.5 18.5" />
+      <path d="M15.5 15.5 L17.5 13.5" />
+      <path d="M18.5 18.5 L20.5 16.5" />
+    </g>
+  ),
+  lock: (
+    <g>
+      <rect x="5.4" y="10.5" width="13.2" height="9.6" rx="1.5" />
+      <path d="M8 10.5 V8 a4 4 0 0 1 8 0 V10.5" />
+      <path d="M12 14 V16.6" />
+    </g>
+  ),
+  mail: (
+    <g>
+      <rect x="3.4" y="5.4" width="17.2" height="13.2" rx="1.5" />
+      <path d="M4 7 L12 13 L20 7" />
+    </g>
+  ),
+  user: (
+    <g>
+      <circle cx="12" cy="8" r="3.4" />
+      <path d="M5.5 20.5 C6 15 18 15 18.5 20.5" />
+    </g>
+  ),
+  eye: (
+    <g>
+      <path d="M2.5 12 C5 7 19 7 21.5 12 C19 17 5 17 2.5 12 Z" />
+      <circle cx="12" cy="12" r="2.6" />
+    </g>
+  ),
+  eyeOff: (
+    <g>
+      <path d="M2.5 12 C5 7.5 19 7.5 21.5 12 C20.6 13.8 18.8 15.2 16.7 16.1" />
+      <path d="M14.1 13.9 a3 3 0 0 1 -4 -4" />
+      <path d="M4 4 L20 20" />
+    </g>
+  ),
+  arrowRight: (
+    <g>
+      <path d="M4 12 H19" />
+      <path d="M13 6 L19 12 L13 18" />
+    </g>
+  ),
+  quill: (
+    <g>
+      <path d="M20 4 C13 7 8 13 6.2 20" />
+      <path d="M20 4 C16 5 12 8 10 12 L14.5 12.5" />
+      <path d="M6.2 20 L9.4 16.8" />
+    </g>
+  ),
+  chevronLeft: (
+    <g>
+      <path d="M14.5 6 L8.5 12 L14.5 18" />
+    </g>
+  ),
 }
 
 export function Icon({ name, size = 24, variant = 'line', strokeWidth, className, style }: IconProps) {
