@@ -2,3 +2,7 @@ CLAUDE.md
 skills-lock.json
 *.agents/
 .env
+resultados/
+graficos/
+__pycache__/
+*.pyc
