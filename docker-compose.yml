@@ -26,6 +26,8 @@ services:
   worker:
     build:
       context: ./backend/worker
+    deploy:
+      replicas: 3
     volumes:
       - avatars:/app/avatars
     environment:
